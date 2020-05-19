@@ -54,7 +54,7 @@ public class PickupOnTriggerSystem : JobComponentSystem
             // if entityA and entityB can collide, destroy each smashable Entity
             if (destructibles.Exists(entityA) && destroyers.Exists(entityB))
             {
-                //ecb.DestroyEntity(entityA);
+                ecb.DestroyEntity(entityA);
                 Debug.Log("mark for removal");
             }
         }
@@ -70,13 +70,13 @@ public class PickupOnTriggerSystem : JobComponentSystem
         pickupOnTriggerJob.destroyers = GetComponentDataFromEntity<DestroyableTag>();
         pickupOnTriggerJob.destructibles = GetComponentDataFromEntity<DestroyOnTriggerTag>();
 
-        //pickupOnTriggerJob.ecb = endSimulationSystem.CreateCommandBuffer();
+        pickupOnTriggerJob.ecb = endSimulationSystem.CreateCommandBuffer();
 
         // schedule the job
         inputDependencies = pickupOnTriggerJob.Schedule(stepPhysicsWorld.Simulation, ref buildPhysicsWorld.PhysicsWorld, inputDependencies);
 
         // complete the job for structural changes (must happen on Main Thread)
-        //inputDependencies.Complete();
+        inputDependencies.Complete();
 
         //        Creating entities
         //        Deleting entities
