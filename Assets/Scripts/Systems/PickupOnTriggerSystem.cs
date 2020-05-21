@@ -70,11 +70,6 @@ public class PickupOnTriggerSystem : JobComponentSystem
         }
     }
 
-    public static void DestroyEntityChildren(Entity entity)
-    {
-
-    }
-
 
     protected override JobHandle OnUpdate(JobHandle inputDependencies)
     {
