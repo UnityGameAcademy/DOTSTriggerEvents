@@ -13,23 +13,24 @@ public class PickupOnTriggerSystem : JobComponentSystem
     private BuildPhysicsWorld buildPhysicsWorld;
     private StepPhysicsWorld stepPhysicsWorld;
 
-    private EndSimulationEntityCommandBufferSystem beginSimECBSystem;
+    private EndSimulationEntityCommandBufferSystem commandBufferSystem;
 
     protected override void OnCreate()
     {
         base.OnCreate();
         buildPhysicsWorld = World.GetOrCreateSystem<BuildPhysicsWorld>();
         stepPhysicsWorld = World.GetOrCreateSystem<StepPhysicsWorld>();
-        beginSimECBSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+
+        commandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
     }
-
 
     struct PickupOnTriggerSystemJob : ITriggerEventsJob
     {
         public EntityCommandBuffer entityCommandBuffer;
         [ReadOnly] public ComponentDataFromEntity<PickupTag> allPickups;
         [ReadOnly] public ComponentDataFromEntity<PlayerTag> allPlayers;
+
         public bool isTriggered;
 
         public void Execute(TriggerEvent triggerEvent)
@@ -52,7 +53,7 @@ public class PickupOnTriggerSystem : JobComponentSystem
             if (allPickups.Exists(entityA) && allPlayers.Exists(entityB))
             {
 
-                UnityEngine.Debug.Log("Pickup entity A " + entityA + " has collided with Player entityB " + entityB);
+                //UnityEngine.Debug.Log("Pickup entity A " + entityA + " has collided with Player entityB " + entityB);
                 entityCommandBuffer.DestroyEntity(entityA);
 
 
@@ -62,7 +63,7 @@ public class PickupOnTriggerSystem : JobComponentSystem
             // if Entity A is the player, and Entity B is the PickUp
             else if (allPickups.Exists(entityB) && allPlayers.Exists(entityA))
             {
-                UnityEngine.Debug.Log("Player Entity A " + entityA + " has collided with Pickup entityB " + entityB);
+                //UnityEngine.Debug.Log("Player Entity A " + entityA + " has collided with Pickup entityB " + entityB);
                 entityCommandBuffer.DestroyEntity(entityB);
                 isTriggered = true;
             }
@@ -80,7 +81,7 @@ public class PickupOnTriggerSystem : JobComponentSystem
         PickupOnTriggerSystemJob pickupJob = new PickupOnTriggerSystemJob();
         pickupJob.allPlayers = GetComponentDataFromEntity<PlayerTag>(true);
         pickupJob.allPickups = GetComponentDataFromEntity<PickupTag>(true);
-        pickupJob.entityCommandBuffer = beginSimECBSystem.CreateCommandBuffer();
+        pickupJob.entityCommandBuffer = commandBufferSystem.CreateCommandBuffer();
 
         pickupJob.isTriggered = false;
 
